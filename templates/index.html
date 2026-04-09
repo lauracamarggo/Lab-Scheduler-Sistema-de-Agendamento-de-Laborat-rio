@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIFIEO — Agendamento de Computadores</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- ======= SIDEBAR ======= -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar__brand">
+            <div class="sidebar__logo">
+                <span class="sidebar__logo-icon">⬡</span>
+            </div>
+            <div>
+                <h1 class="sidebar__title">UNIFIEO</h1>
+                <p class="sidebar__subtitle">Lab Booking</p>
+            </div>
+        </div>
+
+        <nav class="sidebar__nav">
+            <a href="#" class="sidebar__link sidebar__link--active" data-section="dashboard" onclick="navegarPara('dashboard')">
+                <span class="sidebar__link-icon">◧</span>
+                Dashboard
+            </a>
+            <a href="#" class="sidebar__link" data-section="agendar" onclick="navegarPara('agendar')">
+                <span class="sidebar__link-icon">＋</span>
+                Novo Agendamento
+            </a>
+            <a href="#" class="sidebar__link" data-section="meus" onclick="navegarPara('meus')">
+                <span class="sidebar__link-icon">☰</span>
+                Meus Agendamentos
+            </a>
+            <a href="#" class="sidebar__link" data-section="mapa" onclick="navegarPara('mapa')">
+                <span class="sidebar__link-icon">⊞</span>
+                Mapa da Sala
+            </a>
+        </nav>
+
+        <div class="sidebar__footer">
+            <div class="sidebar__user">
+                <div class="sidebar__avatar">A</div>
+                <div>
+                    <p class="sidebar__user-name">Aluno UNIFIEO</p>
+                    <p class="sidebar__user-role">Sala 101 — Laboratório</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ======= CONTEÚDO PRINCIPAL ======= -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div>
+                <h2 class="header__title" id="headerTitle">Dashboard</h2>
+                <p class="header__date" id="headerDate"></p>
+            </div>
+            <button class="btn btn--primary" onclick="navegarPara('agendar')">
+                ＋ Agendar Computador
+            </button>
+        </header>
+
+        <!-- ===== SEÇÃO: DASHBOARD ===== -->
+        <section class="section" id="secaoDashboard">
+            <!-- Cards de Status -->
+            <div class="stats">
+                <div class="stat-card">
+                    <span class="stat-card__icon stat-card__icon--blue">🖥</span>
+                    <div>
+                        <p class="stat-card__value" id="statTotal">—</p>
+                        <p class="stat-card__label">Computadores</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-card__icon stat-card__icon--green">✓</span>
+                    <div>
+                        <p class="stat-card__value" id="statDisponiveis">—</p>
+                        <p class="stat-card__label">Disponíveis</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-card__icon stat-card__icon--amber">📅</span>
+                    <div>
+                        <p class="stat-card__value" id="statHoje">—</p>
+                        <p class="stat-card__label">Reservas Hoje</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-card__icon stat-card__icon--purple">⚡</span>
+                    <div>
+                        <p class="stat-card__value" id="statAtivos">—</p>
+                        <p class="stat-card__label">Ativos Total</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de agendamentos recentes -->
+            <div class="card">
+                <div class="card__header">
+                    <h3 class="card__title">Agendamentos Recentes</h3>
+                </div>
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Aluno</th>
+                                <th>RA</th>
+                                <th>Computador</th>
+                                <th>Data</th>
+                                <th>Horário</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaRecentes">
+                            <tr><td colspan="7" class="table__empty">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SEÇÃO: NOVO AGENDAMENTO ===== -->
+        <section class="section section--hidden" id="secaoAgendar">
+            <div class="card card--form">
+                <div class="card__header">
+                    <h3 class="card__title">Reservar Computador</h3>
+                    <p class="card__desc">Preencha os dados para agendar um computador do laboratório.</p>
+                </div>
+
+                <form id="formAgendamento" class="form" onsubmit="return criarAgendamento(event)">
+                    <div class="form__grid">
+                        <div class="form__group">
+                            <label class="form__label" for="nome">Nome Completo</label>
+                            <input class="form__input" type="text" id="nome" placeholder="Seu nome" required>
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="ra">RA (Registro Acadêmico)</label>
+                            <input class="form__input" type="text" id="ra" placeholder="Ex: 12345" required>
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="computador">Computador</label>
+                            <select class="form__input form__select" id="computador" required>
+                                <option value="">Selecione um PC...</option>
+                            </select>
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="data">Data</label>
+                            <input class="form__input" type="date" id="data" required>
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="horarioInicio">Horário Início</label>
+                            <select class="form__input form__select" id="horarioInicio" required>
+                                <option value="">Início...</option>
+                            </select>
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="horarioFim">Horário Fim</label>
+                            <select class="form__input form__select" id="horarioFim" required>
+                                <option value="">Fim...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form__actions">
+                        <button type="button" class="btn btn--ghost" onclick="navegarPara('dashboard')">Cancelar</button>
+                        <button type="submit" class="btn btn--primary">Confirmar Reserva</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ===== SEÇÃO: MEUS AGENDAMENTOS ===== -->
+        <section class="section section--hidden" id="secaoMeus">
+            <div class="card">
+                <div class="card__header">
+                    <h3 class="card__title">Buscar Meus Agendamentos</h3>
+                </div>
+                <div class="form__group" style="max-width:360px; margin-bottom: 1.5rem;">
+                    <label class="form__label" for="buscaRA">Informe seu RA</label>
+                    <div style="display:flex; gap:.5rem;">
+                        <input class="form__input" type="text" id="buscaRA" placeholder="Ex: 12345">
+                        <button class="btn btn--primary" onclick="buscarMeusAgendamentos()">Buscar</button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Computador</th>
+                                <th>Data</th>
+                                <th>Horário</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaMeus">
+                            <tr><td colspan="6" class="table__empty">Informe seu RA para buscar.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SEÇÃO: MAPA DA SALA ===== -->
+        <section class="section section--hidden" id="secaoMapa">
+            <div class="card">
+                <div class="card__header">
+                    <h3 class="card__title">Mapa da Sala 101 — Laboratório de Informática</h3>
+                    <p class="card__desc">Visualize a disponibilidade dos computadores em tempo real.</p>
+                </div>
+                <div class="sala-legenda">
+                    <span class="sala-legenda__item"><span class="sala-legenda__dot sala-legenda__dot--livre"></span> Livre</span>
+                    <span class="sala-legenda__item"><span class="sala-legenda__dot sala-legenda__dot--ocupado"></span> Ocupado Hoje</span>
+                    <span class="sala-legenda__item"><span class="sala-legenda__dot sala-legenda__dot--manutencao"></span> Manutenção</span>
+                </div>
+                <div class="sala-grid" id="mapaSala">
+                    <!-- Gerado via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast de notificação -->
+    <div class="toast" id="toast"></div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

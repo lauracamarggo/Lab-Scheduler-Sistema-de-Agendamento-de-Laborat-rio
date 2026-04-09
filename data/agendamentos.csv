@@ -1,0 +1,4 @@
+id,usuario_nome,usuario_ra,computador_id,computador_numero,data,horario_inicio,horario_fim,status
+35eb73c8,Laura,202510394,pc-07,7,2026-03-26,11:00,11:30,cancelado
+567b2b61,Laura,2025,pc-01,1,2026-03-25,07:00,22:00,cancelado
+af5d1651,Laura,2025,pc-01,1,2026-03-25,07:00,22:00,ativo
